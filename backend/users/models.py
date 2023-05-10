@@ -1,7 +1,9 @@
 from enum import Enum
 
+from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.core.validators import RegexValidator
 
 
 class UserRoles(Enum):
@@ -27,7 +29,11 @@ class FoodgramUser(AbstractUser):
         max_length=150,
         verbose_name='Логин',
         unique=True,
-        blank=False
+        blank=False,
+        validators=[RegexValidator(
+            regex=r'^[\w.@+-]+$',
+            message='Имя пользователя содержит недопустимый символ'
+        )]
     )
     first_name = models.CharField(
         max_length=150,
@@ -68,3 +74,18 @@ class FoodgramUser(AbstractUser):
         return self.role == UserRoles.user.name
 
     REQUIRED_FIELDS = ["first_name", "last_name", ]
+
+class Follow(models.Model):
+    user = models.ForeignKey(
+        FoodgramUser,
+        on_delete=models.CASCADE,
+        related_name='Подписчик',
+    )
+    author = models.ForeignKey(
+        FoodgramUser,
+        on_delete=models.CASCADE,
+        related_name='Автор',
+    )
+
+    def __str__(self):
+        return f'{self.user} - {self.author}'

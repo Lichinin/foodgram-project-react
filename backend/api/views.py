@@ -1,15 +1,12 @@
-from djoser.views import TokenDestroyView
-
 from rest_framework import mixins, permissions
 from rest_framework.mixins import ListModelMixin
-from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
+from django.contrib.auth.decorators import login_required
 
-from rest_framework_simplejwt.authentication import JWTAuthentication
-
-from users.models import FoodgramUser
+from users.models import FoodgramUser, Follow
 
 from .serializers import UserSerializer
+from rest_framework.response import Response
 
 
 class UserViewSet(ListModelMixin, mixins.CreateModelMixin, GenericViewSet):
@@ -17,13 +14,15 @@ class UserViewSet(ListModelMixin, mixins.CreateModelMixin, GenericViewSet):
     serializer_class = UserSerializer
     permission_classes = [permissions.AllowAny]
 
-
-class TokenDestroyAPIView(TokenDestroyView):
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [permissions.IsAuthenticated]
-
-    def post(self, request, *args, **kwargs):
+    @login_required
+    def profile_follow(request, username):
         user = request.user
-        user.auth_token.delete()
-
-        return Response(status=204)
+        author = FoodgramUser.objects.get(username=username)
+        serializer = SubscribeSerializer(author, data=request.data, context={"request": request})
+        follow = Follow.objects.filter(user=user, author=author)
+        if user != author and not follow.exists():
+            Follow.objects.create(
+                user=user,
+                author=author,
+            )
+        return Response(serializer.data)
