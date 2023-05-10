@@ -1,0 +1,5 @@
+[flake8]
+#ignore = D203
+exclude = .git,__pycache__,__init__.py,venv
+application-import-names = backend # Указываем флейку директории, в которых хранятся локальные пакеты.
+import-order-style = google
