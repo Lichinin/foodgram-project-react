@@ -28,3 +28,17 @@ class Tag(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Ingredients(models.Model):
+
+    name = models.CharField(
+        max_length=200,
+        verbose_name='Ингредиент',
+        blank=False
+    )
+    measurement_unit = models.CharField(
+        max_length=200,
+        verbose_name='Единицы измерения',
+        blank=False
+    )
