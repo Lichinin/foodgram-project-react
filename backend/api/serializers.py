@@ -46,3 +46,4 @@ class CustomUserCreateSerializer(UserCreateSerializer):
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     username_field = User.EMAIL_FIELD
+

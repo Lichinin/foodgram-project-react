@@ -1,41 +1,30 @@
+from django.core.validators import RegexValidator
 from django.db import models
 
 
-# class Recipe(models.Model):
-#     name = models.CharField(
-#         'название',
-#         max_length=200,
-#         db_index=True
-#     )
-#     year = models.PositiveIntegerField(
-#         'год',
-#         validators=(validate_year, ),
-#         db_index=True
-#     )
-#     category = models.ForeignKey(
-#         Category,
-#         on_delete=models.SET_NULL,
-#         related_name='titles',
-#         verbose_name='категория',
-#         null=True,
-#         blank=True
-#     )
-#     description = models.TextField(
-#         'описание',
-#         max_length=255,
-#         null=True,
-#         blank=True
-#     )
-#     genre = models.ManyToManyField(
-#         Genre,
-#         related_name='titles',
-#         verbose_name='жанр'
-#     )
+class Tag(models.Model):
 
-#     class Meta:
-#         verbose_name = 'Произведение'
-#         verbose_name_plural = 'Произведения'
+    name = models.CharField(
+        max_length=200,
+        verbose_name='Название Тэга',
+        blank=False
+    )
+    color = models.CharField(
+        max_length=7,
+        verbose_name='Цвет',
+    )
+    slug = models.SlugField(
+        max_length=200,
+        verbose_name='Цвет',
+        validators=[RegexValidator(
+            regex=r'^[-a-zA-Z0-9_]+$',
+            message='Slug содержит недопустимый символ'
+        )]
+    )
 
-#     def __str__(self):
-#         return self.name
+    class Meta:
+        verbose_name = 'Тэг'
+        verbose_name_plural = 'Тэги'
 
+    def __str__(self):
+        return self.name

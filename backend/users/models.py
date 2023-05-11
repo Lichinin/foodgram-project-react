@@ -1,9 +1,8 @@
 from enum import Enum
 
-from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractUser
-from django.db import models
 from django.core.validators import RegexValidator
+from django.db import models
 
 
 class UserRoles(Enum):
@@ -74,6 +73,7 @@ class FoodgramUser(AbstractUser):
         return self.role == UserRoles.user.name
 
     REQUIRED_FIELDS = ["first_name", "last_name", ]
+
 
 class Follow(models.Model):
     user = models.ForeignKey(

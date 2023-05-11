@@ -14,15 +14,15 @@ class UserViewSet(ListModelMixin, mixins.CreateModelMixin, GenericViewSet):
     serializer_class = UserSerializer
     permission_classes = [permissions.AllowAny]
 
-    @login_required
-    def profile_follow(request, username):
-        user = request.user
-        author = FoodgramUser.objects.get(username=username)
-        serializer = SubscribeSerializer(author, data=request.data, context={"request": request})
-        follow = Follow.objects.filter(user=user, author=author)
-        if user != author and not follow.exists():
-            Follow.objects.create(
-                user=user,
-                author=author,
-            )
-        return Response(serializer.data)
+# @login_required
+# def profile_follow(request, username):
+#     user = request.user
+#     author = FoodgramUser.objects.get(username=username)
+#     serializer = SubscribeSerializer(author, data=request.data, context={"request": request})
+#     follow = Follow.objects.filter(user=user, author=author)
+#     if user != author and not follow.exists():
+#         Follow.objects.create(
+#             user=user,
+#             author=author,
+#         )
+#     return Response(serializer.data)
