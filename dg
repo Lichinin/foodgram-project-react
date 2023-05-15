@@ -1,0 +1,29 @@
+[33mcommit 44cb97a24e5e7fc01c39dcd64132cf05d68538e0[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m, [m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: Виталий Личинин <lichinin.v@yandex.ru>
+Date:   Fri May 12 01:15:34 2023 +0300
+
+    add Ingredients
+
+[33mcommit be7f24cb5be32a26146ee591f1c1a7d2fd18474e[m
+Author: Виталий Личинин <lichinin.v@yandex.ru>
+Date:   Fri May 12 00:18:38 2023 +0300
+
+    add Tags
+
+[33mcommit af649c5592dce224a42b8a3f76411f071de6137a[m
+Author: Виталий Личинин <lichinin.v@yandex.ru>
+Date:   Thu May 11 01:39:14 2023 +0300
+
+    Users на TokenAuthentication
+
+[33mcommit 8f01e804682072ef7dade09a140622b927e84e46[m
+Author: Виталий Личинин <lichinin.v@yandex.ru>
+Date:   Thu May 11 00:21:57 2023 +0300
+
+    Users на SimleJWT
+
+[33mcommit 69f017e3e2284bcc160019c425ac75e4e730060e[m
+Author: Lichinin <112896265+Lichinin@users.noreply.github.com>
+Date:   Tue May 2 21:48:12 2023 +0300
+
+    Initial commit

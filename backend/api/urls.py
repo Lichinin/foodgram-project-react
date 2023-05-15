@@ -1,18 +1,17 @@
+from .views import CustomUserViewSet
+
 from django.urls import include, path
 
 from rest_framework import routers
 
-from .views import UserViewSet
-
-app_name = 'users'
+app_name = 'api'
 
 router = routers.DefaultRouter()
-router.register(r'users', UserViewSet)
+router.register('users', CustomUserViewSet)
 
 
 urlpatterns = [
     path('', include(router.urls)),
     path('', include('djoser.urls')),
     path('auth/', include('djoser.urls.authtoken')),
-    path('users/', UserViewSet.as_view({'get': 'list', 'post': 'create'}), name='user-list-create'),
 ]

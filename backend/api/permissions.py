@@ -39,7 +39,6 @@ class IsSuperUserIsAdminIsModeratorIsAuthor(permissions.BasePermission):
         if request.user.is_authenticated:
             return (
                 request.user.is_admin
-                or request.user.is_moderator
                 or request.user == obj.author
             )
         return False
