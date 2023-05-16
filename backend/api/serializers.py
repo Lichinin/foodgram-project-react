@@ -65,28 +65,21 @@ class SubscribeSerializer(CustomUserSerializer):
         user = self.context.get('request').user
         if Follow.objects.filter(author=author, user=user).exists():
             raise ValidationError(
-                detail='Вы уже подписаны на этого пользователя!',
+                detail='Вы уже подписаны на этого пользователя',
                 code=status.HTTP_400_BAD_REQUEST
             )
         if user == author:
             raise ValidationError(
-                detail='Вы не можете подписаться на самого себя!',
+                detail='Вы не можете подписаться на самого себя',
                 code=status.HTTP_400_BAD_REQUEST
             )
         return data
 
     def get_recipes_count(self, obj):
-        """
-        Счетчик рецептов
-        """
 
         return obj.recipes.count()
 
     def get_recipes(self, obj):
-        """
-        Рецепты избранных авторов
-        """
-
         request = self.context.get('request')
         limit = request.GET.get('recipes_limit')
         recipes = obj.recipes.all()

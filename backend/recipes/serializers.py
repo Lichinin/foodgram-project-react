@@ -1,5 +1,4 @@
 from django.contrib.auth import get_user_model
-from django.db import transaction
 from django.db.models import F
 from django.shortcuts import get_object_or_404
 
@@ -11,10 +10,9 @@ from rest_framework.relations import PrimaryKeyRelatedField
 
 from api.serializers import CustomUserSerializer
 
-User = get_user_model()
-
-
 from .models import IngredientInRecipe, Ingredients, Recipe, Tag
+
+User = get_user_model()
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -69,9 +67,6 @@ class RecipeReadSerializer(serializers.ModelSerializer):
         return user.favorites.filter(recipe=obj).exists()
 
     def get_is_in_shopping_cart(self, obj):
-        """
-        Отображение списка покупок
-        """
         user = self.context.get('request').user
         if user.is_anonymous:
             return False
@@ -119,14 +114,14 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         ingredients = value
         if not ingredients:
             raise ValidationError({
-                'ingredients': 'Нужен хотя бы один ингредиент!'
+                'ingredients': 'Нужен нгредиент'
             })
         ingredients_list = []
         for item in ingredients:
             ingredient = get_object_or_404(Ingredients, id=item['id'])
             if ingredient in ingredients_list:
                 raise ValidationError({
-                    'ingredients': 'Ингридиенты не могут повторяться!'
+                    'ingredients': 'Ингридиенты не могут повторяться'
                 })
             if int(item['amount']) <= 0:
                 raise ValidationError({
@@ -139,18 +134,17 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         tags = value
         if not tags:
             raise ValidationError({
-                'tags': 'Нужно выбрать хотя бы один тег!'
+                'tags': 'Выберите тег'
             })
         tags_list = []
         for tag in tags:
             if tag in tags_list:
                 raise ValidationError({
-                    'tags': 'Теги должны быть уникальными!'
+                    'tags': 'Теги должны быть уникальными'
                 })
             tags_list.append(tag)
         return value
 
-    @transaction.atomic
     def create_ingredients_amounts(self, ingredients, recipe):
         IngredientInRecipe.objects.bulk_create(
             [IngredientInRecipe(
@@ -160,7 +154,6 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
             ) for ingredient in ingredients]
         )
 
-    @transaction.atomic
     def create(self, validated_data):
         tags = validated_data.pop('tags')
         ingredients = validated_data.pop('ingredients')
@@ -170,7 +163,6 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
                                         ingredients=ingredients)
         return recipe
 
-    @transaction.atomic
     def update(self, instance, validated_data):
         tags = validated_data.pop('tags')
         ingredients = validated_data.pop('ingredients')

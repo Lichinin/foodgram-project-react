@@ -19,7 +19,7 @@ class Tag(models.Model):
     )
     slug = models.SlugField(
         max_length=200,
-        verbose_name='Цвет',
+        verbose_name='slug',
         validators=[RegexValidator(
             regex=r'^[-a-zA-Z0-9_]+$',
             message='Slug содержит недопустимый символ'
@@ -47,6 +47,10 @@ class Ingredients(models.Model):
         blank=False
     )
 
+    class Meta:
+        verbose_name = 'Ингредиент'
+        verbose_name_plural = 'Ингредиенты'
+
 
 class Recipe(models.Model):
     name = models.CharField('Название', max_length=200)
@@ -60,7 +64,7 @@ class Recipe(models.Model):
     text = models.TextField('Описание')
     image = models.ImageField(
         'Изображение',
-        upload_to='recipes/'
+        upload_to='recipes/images/'
     )
     cooking_time = models.PositiveSmallIntegerField()
     ingredients = models.ManyToManyField(
@@ -96,7 +100,10 @@ class IngredientInRecipe(models.Model):
         on_delete=models.CASCADE,
         verbose_name='Ингредиент',
     )
-    amount = models.PositiveSmallIntegerField()
+    amount = models.PositiveSmallIntegerField(
+        verbose_name='Количество',
+    )
+
 
     class Meta:
         verbose_name = 'Ингредиент в рецепте'
@@ -148,3 +155,7 @@ class ShoppingCart(models.Model):
         related_name='shopping_cart',
         verbose_name='Рецепт',
     )
+
+    class Meta:
+        verbose_name = 'Список покупок'
+        verbose_name_plural = 'Список покупок'

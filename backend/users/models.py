@@ -7,8 +7,6 @@ from django.db.models import UniqueConstraint
 
 
 class UserRoles(Enum):
-    """Перечисление пользовательских ролей."""
-
     user = 'user'
     admin = 'admin'
 
@@ -65,11 +63,13 @@ class Follow(models.Model):
     user = models.ForeignKey(
         FoodgramUser,
         on_delete=models.CASCADE,
+        verbose_name='Подписчик',
         related_name='user',
     )
     author = models.ForeignKey(
         FoodgramUser,
         on_delete=models.CASCADE,
+        verbose_name='Автор',
         related_name='author',
     )
 
