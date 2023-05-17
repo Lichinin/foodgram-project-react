@@ -10,9 +10,8 @@ class UserRoles(Enum):
     user = 'user'
     admin = 'admin'
 
-    @property
-    def choices(cls):
-        return tuple((attribute.name, attribute.value) for attribute in cls)
+
+USER_ROLES_CHOICES = [(role.name, role.value) for role in UserRoles]
 
 
 class FoodgramUser(AbstractUser):
@@ -36,7 +35,7 @@ class FoodgramUser(AbstractUser):
     role = models.CharField(
         max_length=20,
         verbose_name='роль',
-        choices=UserRoles.choices,
+        choices=USER_ROLES_CHOICES,
         default=UserRoles.user.name
     )
 
@@ -75,9 +74,9 @@ class Follow(models.Model):
 
     class Meta:
         ordering = ['-id']
-        constraints = [UniqueConstraint(
-            fields=['user', 'author'],
-            name='unique_subscription'
-        )]
+        constraints = [
+            UniqueConstraint(fields=['user', 'author'],
+                             name='unique_subscription')
+        ]
         verbose_name = 'Подписка'
         verbose_name_plural = 'Подписки'
