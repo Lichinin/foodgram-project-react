@@ -1,7 +1,6 @@
 from django.db.models import Sum
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
-
 from django_filters.rest_framework import DjangoFilterBackend
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
@@ -15,11 +14,15 @@ from rest_framework.viewsets import ModelViewSet
 
 from api.filters import IngredientFilter, RecipeFilter
 from api.permissions import IsAdmin, IsSuperUserIsAdminIsModeratorIsAuthor
-
 from .models import Favourites, Ingredients, Recipe, ShoppingCart, Tag
-from .serializers import (IngredientInRecipe, IngredientsSerializer,
-                          RecipeReadSerializer, RecipeSerializerShort,
-                          RecipeWriteSerializer, TagSerializer)
+from .serializers import (
+    IngredientInRecipe,
+    IngredientsSerializer,
+    RecipeReadSerializer,
+    RecipeSerializerShort,
+    RecipeWriteSerializer,
+    TagSerializer
+)
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
@@ -34,7 +37,7 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
     pagination_class = None
     filter_backends = (DjangoFilterBackend,)
     filterset_class = IngredientFilter
-    search_fields = ("name",)
+    search_fields = ('name',)
 
 
 class RecipesViewSet(ModelViewSet):
@@ -59,8 +62,7 @@ class RecipesViewSet(ModelViewSet):
     def favorite(self, request, pk):
         if request.method == 'POST':
             return self.add_to(Favourites, request.user, pk)
-        else:
-            return self.delete_from(Favourites, request.user, pk)
+        return self.delete_from(Favourites, request.user, pk)
 
     @action(
         detail=True,
@@ -70,13 +72,14 @@ class RecipesViewSet(ModelViewSet):
     def shopping_cart(self, request, pk):
         if request.method == 'POST':
             return self.add_to(ShoppingCart, request.user, pk)
-        else:
-            return self.delete_from(ShoppingCart, request.user, pk)
+        return self.delete_from(ShoppingCart, request.user, pk)
 
     def add_to(self, model, user, pk):
         if model.objects.filter(user=user, recipe__id=pk).exists():
-            return Response({'errors': 'Такой рецепт уже есть'},
-                            status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {'errors': 'Такой рецепт уже есть'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
         recipe = get_object_or_404(Recipe, id=pk)
         model.objects.create(user=user, recipe=recipe)
         serializer = RecipeSerializerShort(recipe)
@@ -87,8 +90,51 @@ class RecipesViewSet(ModelViewSet):
         if obj.exists():
             obj.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
-        return Response({'errors': 'Рецепт удален'},
-                        status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {'errors': 'Рецепт удален'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    def generate_pdf(self, user, ingredients):
+        pdfmetrics.registerFont(TTFont(
+            'Times New Roman',
+            'Times.ttf',
+            'UTF-8'
+        ))
+        pdfmetrics.registerFont(TTFont(
+            'Times New Roman Bold',
+            'timesbd.ttf',
+            'UTF-8'
+        ))
+
+        response = HttpResponse(content_type='application/pdf')
+        filename = f'{user.username}_shopping_list.pdf'
+        response['Content-Disposition'] = f'attachment; filename={filename}'
+
+        pdf_doc = canvas.Canvas(response)
+        pdf_doc.setFont('Times New Roman Bold', 18)
+        pdf_doc.drawString(
+            10,
+            800,
+            f'Список покупок пользователя {user.get_full_name()}'
+        )
+        pdf_doc.setFont('Times New Roman', 12)
+        stroke = 700
+        for ingredient in ingredients:
+            pdf_doc.drawString(
+                20,
+                stroke,
+                '* {} - {} {}'.format(
+                    ingredient['ingredient__name'],
+                    ingredient['amount'],
+                    ingredient['ingredient__measurement_unit']
+                )
+            )
+            stroke -= 25
+        pdf_doc.showPage()
+        pdf_doc.save()
+
+        return response
 
     @action(
         detail=False,
@@ -106,30 +152,6 @@ class RecipesViewSet(ModelViewSet):
             'ingredient__measurement_unit'
         ).annotate(amount=Sum('amount'))
 
-        pdfmetrics.registerFont(
-            TTFont('Times New Roman', 'Times.ttf', 'UTF-8'),
-        )
-        pdfmetrics.registerFont(
-            TTFont('Times New Roman Bold', 'timesbd.ttf', 'UTF-8')
-        )
-        filename = f'{user.username}_shopping_list.txt'
-        response = HttpResponse(content_type='application/pdf')
-        response['Content-Disposition'] = f'attachment; filename={filename}'
-        p = canvas.Canvas(response)
-        p.setFont("Times New Roman Bold", 18)
-        p.drawString(
-            10, 800, f'Список покупок пользователя {user.get_full_name()}'
-        )
-        p.setFont("Times New Roman", 12)
-        stroke = 700
-        for ingredient in ingredients:
-            p.drawString(
-                20,
-                stroke, f'* {ingredient["ingredient__name"]} - {ingredient["amount"]} {ingredient["ingredient__measurement_unit"]}'
-            )
-            stroke -= 25
-
-        p.showPage()
-        p.save()
+        response = self.generate_pdf(user, ingredients)
 
         return response

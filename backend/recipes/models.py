@@ -104,7 +104,6 @@ class IngredientInRecipe(models.Model):
         verbose_name='Количество',
     )
 
-
     class Meta:
         verbose_name = 'Ингредиент в рецепте'
         verbose_name_plural = 'Ингредиенты в рецептах'
@@ -133,10 +132,10 @@ class Favourites(models.Model):
     class Meta:
         verbose_name = 'Избранное'
         verbose_name_plural = 'Избранное'
-        constraints = [
-            UniqueConstraint(fields=['user', 'recipe'],
-                             name='unique_favourite')
-        ]
+        constraints = [UniqueConstraint(
+            fields=['user', 'recipe'],
+            name='unique_favourite'
+        )]
 
     def __str__(self):
         return f'{self.user} добавил "{self.recipe}" в Избранное'

@@ -1,8 +1,9 @@
 from django.contrib import admin
 from django.contrib.admin import display
 
-from .models import (Favourites, IngredientInRecipe, Ingredients, Recipe,
-                     ShoppingCart, Tag)
+from .models import (
+    Favourites, IngredientInRecipe, Ingredients, Recipe, ShoppingCart, Tag
+)
 
 
 @admin.register(Tag)
@@ -21,7 +22,7 @@ class RecipeAdmin(admin.ModelAdmin):
     list_display = ('name', 'author', 'in_favoutites_count')
     list_filter = ('author', 'name', 'tags')
 
-    @display(description='Доавлений в избранное')
+    @display(description='Добавлений в избранное')
     def in_favoutites_count(self, obj):
         return obj.favorites.count()
 

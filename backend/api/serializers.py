@@ -1,5 +1,4 @@
 from django.contrib.auth import get_user_model
-
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
@@ -11,7 +10,7 @@ from users.models import Follow
 User = get_user_model()
 
 
-class CustomUserCreateSerializer(UserCreateSerializer):
+class UserCreateSerializer(UserCreateSerializer):
 
     class Meta:
         model = User
@@ -25,7 +24,7 @@ class CustomUserCreateSerializer(UserCreateSerializer):
         )
 
 
-class CustomUserSerializer(UserSerializer):
+class UsersSerializer(UserSerializer):
     is_subscribed = SerializerMethodField(read_only=True)
 
     class Meta:
@@ -50,12 +49,12 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     username_field = User.EMAIL_FIELD
 
 
-class SubscribeSerializer(CustomUserSerializer):
+class SubscribeSerializer(UsersSerializer):
     recipes_count = SerializerMethodField()
     recipes = SerializerMethodField()
 
-    class Meta(CustomUserSerializer.Meta):
-        fields = CustomUserSerializer.Meta.fields + (
+    class Meta(UsersSerializer.Meta):
+        fields = UsersSerializer.Meta.fields + (
             'recipes_count', 'recipes'
         )
         read_only_fields = ('email', 'username')

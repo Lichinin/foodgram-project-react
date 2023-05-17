@@ -74,9 +74,9 @@ class Follow(models.Model):
 
     class Meta:
         ordering = ['-id']
-        constraints = [
-            UniqueConstraint(fields=['user', 'author'],
-                             name='unique_subscription')
-        ]
+        constraints = [UniqueConstraint(
+            fields=['user', 'author'],
+            name='unique_subscription'
+        )]
         verbose_name = 'Подписка'
         verbose_name_plural = 'Подписки'
