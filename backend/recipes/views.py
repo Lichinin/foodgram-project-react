@@ -25,6 +25,48 @@ from .serializers import (
 )
 
 
+def generate_pdf(user, ingredients):
+    pdfmetrics.registerFont(TTFont(
+        'Times New Roman',
+        'times.ttf',
+        'UTF-8'
+    ))
+    pdfmetrics.registerFont(TTFont(
+        'Times New Roman Bold',
+        'timesbd.ttf',
+        'UTF-8'
+    ))
+
+    response = HttpResponse(content_type='application/pdf')
+    filename = f'{user.username}_shopping_list.pdf'
+    response['Content-Disposition'] = f'attachment; filename={filename}'
+
+    pdf_doc = canvas.Canvas(response)
+    pdf_doc.setFont('Times New Roman Bold', 18)
+    pdf_doc.drawString(
+        10,
+        800,
+        f'Список покупок пользователя {user.get_full_name()}'
+    )
+    pdf_doc.setFont('Times New Roman', 12)
+    stroke = 700
+    for ingredient in ingredients:
+        pdf_doc.drawString(
+            20,
+            stroke,
+            '* {} - {} {}'.format(
+                ingredient['ingredient__name'],
+                ingredient['amount'],
+                ingredient['ingredient__measurement_unit']
+            )
+        )
+        stroke -= 25
+    pdf_doc.showPage()
+    pdf_doc.save()
+
+    return response
+
+
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
@@ -95,47 +137,6 @@ class RecipesViewSet(ModelViewSet):
             status=status.HTTP_400_BAD_REQUEST
         )
 
-    def generate_pdf(self, user, ingredients):
-        pdfmetrics.registerFont(TTFont(
-            'Times New Roman',
-            'Times.ttf',
-            'UTF-8'
-        ))
-        pdfmetrics.registerFont(TTFont(
-            'Times New Roman Bold',
-            'timesbd.ttf',
-            'UTF-8'
-        ))
-
-        response = HttpResponse(content_type='application/pdf')
-        filename = f'{user.username}_shopping_list.pdf'
-        response['Content-Disposition'] = f'attachment; filename={filename}'
-
-        pdf_doc = canvas.Canvas(response)
-        pdf_doc.setFont('Times New Roman Bold', 18)
-        pdf_doc.drawString(
-            10,
-            800,
-            f'Список покупок пользователя {user.get_full_name()}'
-        )
-        pdf_doc.setFont('Times New Roman', 12)
-        stroke = 700
-        for ingredient in ingredients:
-            pdf_doc.drawString(
-                20,
-                stroke,
-                '* {} - {} {}'.format(
-                    ingredient['ingredient__name'],
-                    ingredient['amount'],
-                    ingredient['ingredient__measurement_unit']
-                )
-            )
-            stroke -= 25
-        pdf_doc.showPage()
-        pdf_doc.save()
-
-        return response
-
     @action(
         detail=False,
         permission_classes=[IsAuthenticated]
@@ -152,6 +153,6 @@ class RecipesViewSet(ModelViewSet):
             'ingredient__measurement_unit'
         ).annotate(amount=Sum('amount'))
 
-        response = self.generate_pdf(user, ingredients)
+        response = generate_pdf(user, ingredients)
 
         return response
