@@ -9,11 +9,12 @@ services:
 
   backend:
     image: lichinin/foodgram_backend:latest
+    restart: always
     volumes:
       - static_value:/app/static/
       - media_value:/app/media/
       - redoc:/app/api/docs/
-      - ./logs:/app/logs
+      # - ./logs:/app/logs
     depends_on:
       - db
     env_file:
