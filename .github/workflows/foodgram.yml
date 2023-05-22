@@ -89,7 +89,7 @@ jobs:
           script: |
             sudo rm -f .env        
             sudo touch .env
-            sudo chmod 666 .env
+            sudo chmod 777 .env
             
             echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" | sudo tee -a .env
             echo "DB_ENGINE=${{ secrets.DB_ENGINE }}" | sudo tee -a .env
