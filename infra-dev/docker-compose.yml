@@ -6,6 +6,8 @@ services:
       - ./.env
     volumes:
       - db_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
 
   backend:
     image: lichinin/foodgram_backend:latest
