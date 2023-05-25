@@ -14,7 +14,7 @@ class TagAdmin(admin.ModelAdmin):
 @admin.register(Ingredients)
 class IngredientsAdmin(admin.ModelAdmin):
     list_display = ('name', 'measurement_unit')
-    search_fields = ['name__icontains', ]
+    # search_fields = ['name__icontains', ]
 
 
 @admin.register(Recipe)
