@@ -14,7 +14,6 @@ services:
       - static_value:/app/static/
       - media_value:/app/media/
       - ./docs:/app/api/docs/
-      - ./logs:/app/logs
     depends_on:
       - db
     env_file:
