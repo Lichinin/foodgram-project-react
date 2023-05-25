@@ -17,10 +17,10 @@ class Tag(models.Model):
         max_length=7,
         verbose_name='Цвет',
         unique=True,
-        validators=[RegexValidator(
-            regex='^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$',
-            message='Введите значение цвета в HEX-формате'
-        )]
+        # validators=[RegexValidator(
+        #     regex='^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$',
+        #     message='Введите значение цвета в HEX-формате'
+        # )]
     )
     slug = models.SlugField(
         max_length=200,
