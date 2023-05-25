@@ -96,22 +96,22 @@ DB_PORT                 # 5432 (порт по умолчанию)
 
 - Запуск Docker Compose на сервере
 ```
-sudo docker compose up -d
+sudo docker-compose up -d
 ```
 
 - Выполните миграции:
 ```
-sudo docker compose exec backend python manage.py migrate
+sudo docker-compose exec backend python manage.py migrate
 ```
 
 - Создайте суперпользователя:
 ```
-sudo docker compose exec backend python manage.py createsuperuser
+sudo docker-compose exec backend python manage.py createsuperuser
 ```
 
 - Соберите статику:
 ```
-sudo docker compose exec backend python manage.py collectstatic --noinput
+sudo docker-compose exec backend python manage.py collectstatic --noinput
 ```
 
 - Наполнить базу данных содержимым из файла ingredients.json:
